@@ -48,3 +48,34 @@ async def create_task(task_data: taskCreate, session: SessionDep):
 def read_tasks(session: SessionDep):
     tasks = session.exec(select(task)).all()
     return tasks
+@app.get("/tasks/{task_id}")
+def read_task(task_id: int, session: SessionDep):
+    task_item = session.get(task, task_id)
+    return task_item
+
+@app.put("/tasks/{task_id}")
+def update_task(task_id: int, task_data: taskCreate, session: SessionDep):
+    task_item = session.get(task, task_id)
+    if not task_item:
+        raise HTTPException(status_code=404, detail="Task not found")
+    task_item.title = task_data.title
+    task_item.description = task_data.description
+    task_item.status = task_data.status
+    session.add(task_item)
+    session.commit()
+    session.refresh(task_item)
+    return task_item
+
+@app.delete("/tasks/{task_id}")
+def delete_task(task_id: int, session: SessionDep):
+    task_item = session.get(task, task_id)
+    if not task_item:
+        raise HTTPException(status_code=404, detail="Task not found")
+    session.delete(task_item)
+    session.commit()
+    return {"message": "Task deleted successfully"}
+
+@app.get("/tasks/{status}")
+def sort_tasks(status: str, session: SessionDep):
+    tasks = session.exec(select(task).where(task.status == status)).all()
+    return tasks
