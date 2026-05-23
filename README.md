@@ -14,7 +14,7 @@ The goal of this project was to practice backend development fundamentals includ
 - Update existing tasks
 - Delete tasks
 - Automatic interactive API documentation with FastAPI
-- 
+
 ## Tech Stack
 - Python
 - FastAPI
